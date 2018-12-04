@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
+	"github.com/FlamingTree/dd-trace-go/ddtrace"
 )
 
 var _ ddtrace.SpanContext = (*spanContext)(nil)

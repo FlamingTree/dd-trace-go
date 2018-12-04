@@ -6,7 +6,7 @@
 //
 // To get started, visit the documentation for any of the packages you'd like to begin
 // with by accessing the subdirectories of this package: https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/ddtrace#pkg-subdirectories.
-package ddtrace // import "gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
+package ddtrace // import "github.com/FlamingTree/dd-trace-go/ddtrace"
 
 import "time"
 

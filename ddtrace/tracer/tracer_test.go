@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/internal"
+	"github.com/FlamingTree/dd-trace-go/ddtrace"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/internal"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tinylib/msgp/msgp"

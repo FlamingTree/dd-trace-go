@@ -14,9 +14,9 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/clientopt"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/mocktracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 )
 
 func Test(t *testing.T) {

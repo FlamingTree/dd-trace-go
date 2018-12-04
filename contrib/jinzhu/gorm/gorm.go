@@ -2,7 +2,7 @@
 package gorm
 
 import (
-	sqltraced "gopkg.in/DataDog/dd-trace-go.v1/contrib/database/sql"
+	sqltraced "github.com/FlamingTree/dd-trace-go/contrib/database/sql"
 
 	"github.com/jinzhu/gorm"
 )

@@ -7,7 +7,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/clientopt"
 
-	mongotrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/mongodb/mongo-go-driver/mongo"
+	mongotrace "github.com/FlamingTree/dd-trace-go/contrib/mongodb/mongo-go-driver/mongo"
 )
 
 func Example() {

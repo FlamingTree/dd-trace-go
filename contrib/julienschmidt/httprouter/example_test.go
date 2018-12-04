@@ -7,9 +7,9 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 
-	httptrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/julienschmidt/httprouter"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	httptrace "github.com/FlamingTree/dd-trace-go/contrib/julienschmidt/httprouter"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 )
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

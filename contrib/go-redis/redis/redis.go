@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 
 	"github.com/go-redis/redis"
 )

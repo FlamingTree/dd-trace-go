@@ -12,9 +12,9 @@ import (
 	"sync"
 
 	"github.com/mongodb/mongo-go-driver/core/event"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 )
 
 type spanKey struct {

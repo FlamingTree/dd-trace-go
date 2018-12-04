@@ -1,4 +1,4 @@
-package sqltest // import "gopkg.in/DataDog/dd-trace-go.v1/contrib/internal/sqltest"
+package sqltest // import "github.com/FlamingTree/dd-trace-go/contrib/internal/sqltest"
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"log"
 	"testing"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/mocktracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 
 	"github.com/stretchr/testify/assert"
 )

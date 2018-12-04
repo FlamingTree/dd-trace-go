@@ -1,4 +1,4 @@
-package httputil // import "gopkg.in/DataDog/dd-trace-go.v1/contrib/internal/httputil"
+package httputil // import "github.com/FlamingTree/dd-trace-go/contrib/internal/httputil"
 
 //go:generate sh -c "go run make_responsewriter.go | gofmt > trace_gen.go"
 
@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 )
 
 // TraceAndServe will apply tracing to the given http.Handler using the passed tracer under the given service and resource.

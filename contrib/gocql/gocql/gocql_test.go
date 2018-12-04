@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/mocktracer"
+	"github.com/FlamingTree/dd-trace-go/ddtrace/tracer"
 
 	"github.com/gocql/gocql"
 	"github.com/stretchr/testify/assert"
