@@ -1,4 +1,4 @@
-package sql // import "git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql"
+package sql // import "github.com/FlamingTree/dd-trace-go/contrib/database/sql"
 
 import (
 	"context"

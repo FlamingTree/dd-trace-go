@@ -2,7 +2,7 @@ package sql
 
 import (
 	"database/sql/driver"
-	"git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql/internal"
+	"github.com/FlamingTree/dd-trace-go/contrib/database/sql/internal"
 )
 
 var _ driver.Driver = (*tracedDriver)(nil)

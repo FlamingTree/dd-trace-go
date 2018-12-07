@@ -5,7 +5,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"log"
 
-	sqltrace "git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql"
+	sqltrace "github.com/FlamingTree/dd-trace-go/contrib/database/sql"
 	"github.com/go-sql-driver/mysql"
 )
 

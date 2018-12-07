@@ -1,4 +1,4 @@
-package internal // import "git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql/internal"
+package internal // import "github.com/FlamingTree/dd-trace-go/contrib/database/sql/internal"
 
 import (
 	"fmt"
