@@ -1,4 +1,4 @@
-package sql // import "github.com/FlamingTree/dd-trace-go/contrib/database/sql"
+package sql // import "git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql"
 
 import (
 	"context"
@@ -17,14 +17,15 @@ func (tc *tracedConn) BeginTx(ctx context.Context, opts driver.TxOptions) (tx dr
 	start := time.Now()
 	if connBeginTx, ok := tc.Conn.(driver.ConnBeginTx); ok {
 		tx, err = connBeginTx.BeginTx(ctx, opts)
-		tc.tryTrace(ctx, "Begin", "", start, err)
+		tc.tryTrace(ctx, OpSQLTxBegin, "", nil, start, err)
 		if err != nil {
 			return nil, err
 		}
+		ctx = context.WithValue(ctx, ctxTxBeginKey{}, start)
 		return &tracedTx{tx, tc.traceParams, ctx}, nil
 	}
 	tx, err = tc.Conn.Begin()
-	tc.tryTrace(ctx, "Begin", "", start, err)
+	tc.tryTrace(ctx, OpSQLTxBegin, "", nil, start, err)
 	if err != nil {
 		return nil, err
 	}
@@ -35,14 +36,14 @@ func (tc *tracedConn) PrepareContext(ctx context.Context, query string) (stmt dr
 	start := time.Now()
 	if connPrepareCtx, ok := tc.Conn.(driver.ConnPrepareContext); ok {
 		stmt, err := connPrepareCtx.PrepareContext(ctx, query)
-		tc.tryTrace(ctx, "Prepare", query, start, err)
+		tc.tryTrace(ctx, OpSQLPrepare, query, nil, start, err)
 		if err != nil {
 			return nil, err
 		}
 		return &tracedStmt{stmt, tc.traceParams, ctx, query}, nil
 	}
 	stmt, err = tc.Prepare(query)
-	tc.tryTrace(ctx, "Prepare", query, start, err)
+	tc.tryTrace(ctx, OpSQLPrepare, query, nil, start, err)
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +61,8 @@ func (tc *tracedConn) ExecContext(ctx context.Context, query string, args []driv
 	start := time.Now()
 	if execContext, ok := tc.Conn.(driver.ExecerContext); ok {
 		r, err := execContext.ExecContext(ctx, query, args)
-		tc.tryTrace(ctx, "Exec", query, start, err)
-		return r, err
+		tc.tryTrace(ctx, OpSQLConnExec, query, args, start, err)
+		return &tracedResult{r, tc.traceParams, ctx}, err
 	}
 	dargs, err := namedValueToValue(args)
 	if err != nil {
@@ -73,8 +74,8 @@ func (tc *tracedConn) ExecContext(ctx context.Context, query string, args []driv
 	default:
 	}
 	r, err = tc.Exec(query, dargs)
-	tc.tryTrace(ctx, "Exec", query, start, err)
-	return r, err
+	tc.tryTrace(ctx, OpSQLConnExec, query, dargs, start, err)
+	return &tracedResult{r, tc.traceParams, ctx}, err
 }
 
 // tracedConn has a Ping method in order to implement the pinger interface
@@ -83,7 +84,7 @@ func (tc *tracedConn) Ping(ctx context.Context) (err error) {
 	if pinger, ok := tc.Conn.(driver.Pinger); ok {
 		err = pinger.Ping(ctx)
 	}
-	tc.tryTrace(ctx, "Ping", "", start, err)
+	tc.tryTrace(ctx, OpSQLPing, "", nil, start, err)
 	return err
 }
 
@@ -98,8 +99,8 @@ func (tc *tracedConn) QueryContext(ctx context.Context, query string, args []dri
 	start := time.Now()
 	if queryerContext, ok := tc.Conn.(driver.QueryerContext); ok {
 		rows, err := queryerContext.QueryContext(ctx, query, args)
-		tc.tryTrace(ctx, "Query", query, start, err)
-		return rows, err
+		tc.tryTrace(ctx, OpSQLConnQuery, query, args, start, err)
+		return &tracedRows{rows, tc.traceParams, ctx}, err
 	}
 	dargs, err := namedValueToValue(args)
 	if err != nil {
@@ -111,6 +112,6 @@ func (tc *tracedConn) QueryContext(ctx context.Context, query string, args []dri
 	default:
 	}
 	rows, err = tc.Query(query, dargs)
-	tc.tryTrace(ctx, "Query", query, start, err)
-	return rows, err
+	tc.tryTrace(ctx, OpSQLConnQuery, query, dargs, start, err)
+	return &tracedRows{rows, tc.traceParams, ctx}, err
 }

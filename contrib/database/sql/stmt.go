@@ -18,20 +18,20 @@ type tracedStmt struct {
 }
 
 // Close sends a span before closing a statement
-func (s *tracedStmt) Close() (err error) {
+func (ts *tracedStmt) Close() (err error) {
 	start := time.Now()
-	err = s.Stmt.Close()
-	s.tryTrace(s.ctx, "Close", "", start, err)
+	err = ts.Stmt.Close()
+	ts.tryTrace(ts.ctx, OpSQLStmtClose, ts.query, nil, start, err)
 	return err
 }
 
 // ExecContext is needed to implement the driver.StmtExecContext interface
-func (s *tracedStmt) ExecContext(ctx context.Context, args []driver.NamedValue) (res driver.Result, err error) {
+func (ts *tracedStmt) ExecContext(ctx context.Context, args []driver.NamedValue) (res driver.Result, err error) {
 	start := time.Now()
-	if stmtExecContext, ok := s.Stmt.(driver.StmtExecContext); ok {
+	if stmtExecContext, ok := ts.Stmt.(driver.StmtExecContext); ok {
 		res, err := stmtExecContext.ExecContext(ctx, args)
-		s.tryTrace(ctx, "Exec", s.query, start, err)
-		return res, err
+		ts.tryTrace(ctx, OpSQLStmtExec, ts.query, args, start, err)
+		return &tracedResult{res, ts.traceParams, ctx}, err
 	}
 	dargs, err := namedValueToValue(args)
 	if err != nil {
@@ -42,18 +42,18 @@ func (s *tracedStmt) ExecContext(ctx context.Context, args []driver.NamedValue) 
 		return nil, ctx.Err()
 	default:
 	}
-	res, err = s.Exec(dargs)
-	s.tryTrace(ctx, "Exec", s.query, start, err)
-	return res, err
+	res, err = ts.Exec(dargs)
+	ts.tryTrace(ctx, OpSQLStmtExec, ts.query, dargs, start, err)
+	return &tracedResult{res, ts.traceParams, ctx}, err
 }
 
 // QueryContext is needed to implement the driver.StmtQueryContext interface
-func (s *tracedStmt) QueryContext(ctx context.Context, args []driver.NamedValue) (rows driver.Rows, err error) {
+func (ts *tracedStmt) QueryContext(ctx context.Context, args []driver.NamedValue) (rows driver.Rows, err error) {
 	start := time.Now()
-	if stmtQueryContext, ok := s.Stmt.(driver.StmtQueryContext); ok {
+	if stmtQueryContext, ok := ts.Stmt.(driver.StmtQueryContext); ok {
 		rows, err := stmtQueryContext.QueryContext(ctx, args)
-		s.tryTrace(ctx, "Query", s.query, start, err)
-		return rows, err
+		ts.tryTrace(ctx, OpSQLStmtQuery, ts.query, args, start, err)
+		return &tracedRows{rows, ts.traceParams, ctx}, err
 	}
 	dargs, err := namedValueToValue(args)
 	if err != nil {
@@ -64,9 +64,9 @@ func (s *tracedStmt) QueryContext(ctx context.Context, args []driver.NamedValue)
 		return nil, ctx.Err()
 	default:
 	}
-	rows, err = s.Query(dargs)
-	s.tryTrace(ctx, "Query", s.query, start, err)
-	return rows, err
+	rows, err = ts.Query(dargs)
+	ts.tryTrace(ctx, OpSQLStmtQuery, ts.query, args, start, err)
+	return &tracedRows{rows, ts.traceParams, ctx}, err
 }
 
 // copied from stdlib database/sql package: src/database/sql/ctxutil.go

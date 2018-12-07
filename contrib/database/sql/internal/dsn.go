@@ -1,10 +1,9 @@
-package internal // import "github.com/FlamingTree/dd-trace-go/contrib/database/sql/internal"
+package internal // import "git.inke.cn/gaia/server/common/gaia.common.go/gaiatrace/database/sql/internal"
 
 import (
-	"net"
-	"strings"
-
-	"github.com/FlamingTree/dd-trace-go/ddtrace/ext"
+	"fmt"
+	"github.com/go-sql-driver/mysql"
+	"github.com/opentracing/opentracing-go/ext"
 )
 
 // ParseDSN parses various supported DSN types (currently mysql and postgres) into a
@@ -17,67 +16,22 @@ func ParseDSN(driverName, dsn string) (meta map[string]string, err error) {
 		if err != nil {
 			return
 		}
-	case "postgres":
-		meta, err = parsePostgresDSN(dsn)
-		if err != nil {
-			return
-		}
 	default:
 		// not supported
 	}
-	return reduceKeys(meta), nil
-}
-
-// reduceKeys takes a map containing parsed DSN information and returns a new
-// map containing only the keys relevant as tracing tags, if any.
-func reduceKeys(meta map[string]string) map[string]string {
-	var keysOfInterest = map[string]string{
-		"user":             ext.DBUser,
-		"application_name": ext.DBApplication,
-		"dbname":           ext.DBName,
-		"host":             ext.TargetHost,
-		"port":             ext.TargetPort,
-	}
-	m := make(map[string]string)
-	for k, v := range meta {
-		if nk, ok := keysOfInterest[k]; ok {
-			m[nk] = v
-		}
-	}
-	return m
+	return meta, nil
 }
 
 // parseMySQLDSN parses a mysql-type dsn into a map.
 func parseMySQLDSN(dsn string) (m map[string]string, err error) {
-	var cfg *mySQLConfig
-	if cfg, err = mySQLConfigFromDSN(dsn); err == nil {
-		host, port, _ := net.SplitHostPort(cfg.Addr)
+	var cfg *mysql.Config
+	if cfg, err = mysql.ParseDSN(dsn); err == nil {
 		m = map[string]string{
-			"user":   cfg.User,
-			"host":   host,
-			"port":   port,
-			"dbname": cfg.DBName,
+			string(ext.DBInstance): fmt.Sprintf("%s/%s", cfg.Addr, cfg.DBName),
+			string(ext.DBUser):     cfg.User,
+			string(ext.DBType):     "mysql",
 		}
 		return m, nil
 	}
 	return nil, err
-}
-
-// parsePostgresDSN parses a postgres-type dsn into a map.
-func parsePostgresDSN(dsn string) (map[string]string, error) {
-	var err error
-	if strings.HasPrefix(dsn, "postgres://") || strings.HasPrefix(dsn, "postgresql://") {
-		// url form, convert to opts
-		dsn, err = parseURL(dsn)
-		if err != nil {
-			return nil, err
-		}
-	}
-	meta := make(map[string]string)
-	if err := parseOpts(dsn, meta); err != nil {
-		return nil, err
-	}
-	// remove sensitive information
-	delete(meta, "password")
-	return meta, nil
 }

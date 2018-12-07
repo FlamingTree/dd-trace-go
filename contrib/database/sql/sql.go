@@ -18,9 +18,8 @@ import (
 )
 
 // Register tells the sql integration package about the driver that we will be tracing. It must
-// be called before Open, if that connection is to be traced. It uses the driverName suffixed
-// with ".db" as the default service name.
-func Register(driverName string, driver driver.Driver, opts ...RegisterOption) {
+// be called before Open, if that connection is to be traced.
+func Register(driverName string, driver driver.Driver, opts ...option) {
 	if driver == nil {
 		panic("sqltrace: Register driver is nil")
 	}
@@ -29,18 +28,16 @@ func Register(driverName string, driver driver.Driver, opts ...RegisterOption) {
 		// no problem, carry on
 		return
 	}
-	cfg := new(registerConfig)
-	defaults(cfg)
-	for _, fn := range opts {
-		fn(cfg)
+
+	var o options
+	for _, opt := range opts {
+		opt(&o)
 	}
-	if cfg.serviceName == "" {
-		cfg.serviceName = driverName + ".db"
-	}
+
 	sql.Register(name, &tracedDriver{
 		Driver:     driver,
 		driverName: driverName,
-		config:     cfg,
+		options:    o,
 	})
 }
 
