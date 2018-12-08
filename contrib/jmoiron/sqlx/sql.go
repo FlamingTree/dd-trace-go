@@ -3,11 +3,12 @@
 // you will be using, then continue using the package as you normally would.
 //
 // For more information on registering and why this needs to happen, please check the
-// github.com/DataDog/dd-trace-go/contrib/database/sql package.
+// github.com/FlamingTree/dd-trace-go/contrib/database/sql package.
 //
 package sqlx // import "github.com/FlamingTree/dd-trace-go/contrib/jmoiron/sqlx"
 
 import (
+	"context"
 	sqltraced "github.com/FlamingTree/dd-trace-go/contrib/database/sql"
 
 	"github.com/jmoiron/sqlx"
@@ -43,11 +44,23 @@ func Connect(driverName, dataSourceName string) (*sqlx.DB, error) {
 		return nil, err
 	}
 	err = db.Ping()
+	//if err != nil {
+	//	db.Close()
+	//	return nil, err
+	//}
+	return db, err
+}
+
+// ConnectContext to a database and verify with a ping.
+// To get tracing, the driver must be formerly registered using the database/sql integration's
+// Register.
+func ConnectContext(ctx context.Context, driverName, dataSourceName string) (*sqlx.DB, error) {
+	db, err := Open(driverName, dataSourceName)
 	if err != nil {
-		db.Close()
-		return nil, err
+		return db, err
 	}
-	return db, nil
+	err = db.PingContext(ctx)
+	return db, err
 }
 
 // MustConnect connects to a database and panics on error.
